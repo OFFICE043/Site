@@ -5,8 +5,8 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from "./toast"; // <-- Түзетілген жол
-import { useToast } from "./use-toast"; // <-- Түзетілген жол
+} from "./toast"; 
+import { useToast } from "./use-toast"; 
 
 export function Toaster() {
   const { toasts } = useToast()
@@ -19,7 +19,8 @@ export function Toaster() {
             <div className="grid gap-1">
               {title && <ToastTitle>{title}</ToastTitle>}
               {description && (
-                <ToastDescription>{description}</TostDescription>
+                // МІНЕ, ОСЫ ЖЕРДЕГІ ҚАТЕ ТҮЗЕТІЛДІ
+                <ToastDescription>{description}</ToastDescription>
               )}
             </div>
             {action}
