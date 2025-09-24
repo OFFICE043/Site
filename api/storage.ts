@@ -1,6 +1,7 @@
-import { type User, type InsertUser } from "./schema"; // <-- Түзетілген жол
+import { type User, type InsertUser } from "./schema";
 import { randomUUID } from "crypto";
 
+// IStorage интерфейсін бұрынғыша қалдырамыз
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -25,16 +26,17 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { 
-      ...insertUser, 
-      id,
+    const newUser: User = { 
+      id: id,
+      username: insertUser.username,
+      email: insertUser.email,
       role: 'user',
       banned: false,
       joinDate: new Date(),
       lastActive: new Date()
     };
-    this.users.set(id, user);
-    return user;
+    this.users.set(id, newUser);
+    return newUser;
   }
 }
 
