@@ -29,7 +29,7 @@ const MOCK_ANIMES = [
     id: "1",
     title: "Naruto Shippuden",
     category: "shonen",
-    image: image: "https://via.placeholder.com/400x600/8B5CF6/ffffff?text=Naruto"
+    image: "https://via.placeholder.com/400x600/8B5CF6/ffffff?text=Naruto",
     description: "Ниндзя дүниесіндегі ең күшті оқиға. Naruto өз арманына жету үшін күреседі.",
     rating: 9.2,
     year: 2023,
@@ -41,7 +41,7 @@ const MOCK_ANIMES = [
     id: "2",
     title: "One Piece",
     category: "adventure", 
-    image: image: "https://via.placeholder.com/400x600/3B82F6/ffffff?text=One+Piece"
+    image: "https://via.placeholder.com/400x600/3B82F6/ffffff?text=One+Piece",
     description: "Теңіз қорғаушылары туралы керемет оқиға. Luffy және оның командасы қазынаны іздейді.",
     rating: 9.5,
     year: 2023,
@@ -60,7 +60,7 @@ const MOCK_ANIMES = [
     status: "Аяқталды",
     totalViews: 35600,
     episodeCount: 1
-  }
+  } // <-- МІНЕ ОСЫ ЖЕРДЕ ҮТІР ТҰРУЫ КЕРЕК ЕДІ, БІРАҚ ТІЗІМ АЯҚТАЛҒАНДЫҚТАН ҚАЖЕТ ЕМЕС. ҚАТЕ БҰРЫНҒЫ КОДТА ОСЫНЫҢ АЛДЫНДА БОЛҒАН.
 ];
 
 const MOCK_USERS = [
