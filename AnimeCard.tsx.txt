@@ -1,0 +1,112 @@
+import { Play, Star, Eye, Calendar } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+interface AnimeCardProps {
+  anime: {
+    id: string;
+    title: string;
+    category: string;
+    image: string;
+    description: string;
+    rating: number;
+    year: number;
+    status: string;
+    totalViews: number;
+    episodeCount?: number;
+  };
+  onPlay?: (animeId: string) => void;
+  onDetails?: (animeId: string) => void;
+}
+
+export default function AnimeCard({ anime, onPlay, onDetails }: AnimeCardProps) {
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      shonen: 'bg-blue-500',
+      adventure: 'bg-green-500',
+      romance: 'bg-pink-500',
+      action: 'bg-red-500',
+      comedy: 'bg-yellow-500',
+      drama: 'bg-purple-500',
+    };
+    return colors[category as keyof typeof colors] || 'bg-gray-500';
+  };
+
+  return (
+    <Card className="anime-card glass-effect border-white/20 overflow-hidden hover-elevate group cursor-pointer" data-testid={`card-anime-${anime.id}`}>
+      <div className="relative">
+        <img
+          src={anime.image}
+          alt={anime.title}
+          className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+        />
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-4 left-4 right-4">
+            <Button
+              onClick={() => onPlay?.(anime.id)}
+              className="w-full bg-primary hover:bg-primary/90 mb-2"
+              data-testid={`button-play-${anime.id}`}
+            >
+              <Play className="mr-2 h-4 w-4" />
+              Көру
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => onDetails?.(anime.id)}
+              className="w-full border-white/20 text-white hover:bg-white/10"
+              data-testid={`button-details-${anime.id}`}
+            >
+              Толығырақ
+            </Button>
+          </div>
+        </div>
+
+        {/* Category Badge */}
+        <Badge className={`absolute top-2 left-2 ${getCategoryColor(anime.category)} text-white`}>
+          {anime.category}
+        </Badge>
+
+        {/* Rating */}
+        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-md px-2 py-1">
+          <Star className="h-3 w-3 text-yellow-400 fill-current" />
+          <span className="text-white text-xs font-medium">{anime.rating}</span>
+        </div>
+      </div>
+
+      <CardContent className="p-4">
+        <h3 className="font-semibold text-white mb-2 truncate" data-testid={`text-title-${anime.id}`}>
+          {anime.title}
+        </h3>
+        
+        <p className="text-white/70 text-sm mb-3 line-clamp-2">
+          {anime.description}
+        </p>
+
+        <div className="flex items-center justify-between text-xs text-white/60">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            <span>{anime.year}</span>
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <Eye className="h-3 w-3" />
+            <span>{anime.totalViews.toLocaleString()}</span>
+          </div>
+          
+          <Badge variant="outline" className="border-white/20 text-white/70">
+            {anime.status}
+          </Badge>
+        </div>
+
+        {anime.episodeCount && (
+          <div className="mt-2 text-xs text-white/60">
+            {anime.episodeCount} эпизод
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

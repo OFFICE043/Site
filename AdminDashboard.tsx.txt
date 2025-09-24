@@ -1,0 +1,305 @@
+import { useState } from "react";
+import { Users, Play, BarChart, Settings, Plus, Edit, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+interface AdminDashboardProps {
+  stats?: {
+    totalAnimes: number;
+    totalEpisodes: number;
+    totalUsers: number;
+    totalViews: number;
+    activeUsers: number;
+    bannedUsers: number;
+  };
+  animes?: Array<{
+    id: string;
+    title: string;
+    category: string;
+    status: string;
+    totalViews: number;
+    episodeCount: number;
+  }>;
+  users?: Array<{
+    id: string;
+    username: string;
+    email: string;
+    role: string;
+    banned: boolean;
+    joinDate: string;
+    lastActive: string;
+  }>;
+  onAddAnime?: () => void;
+  onEditAnime?: (id: string) => void;
+  onDeleteAnime?: (id: string) => void;
+  onBanUser?: (id: string) => void;
+  onUnbanUser?: (id: string) => void;
+  onPromoteUser?: (id: string) => void;
+}
+
+export default function AdminDashboard({
+  stats,
+  animes = [],
+  users = [],
+  onAddAnime,
+  onEditAnime,
+  onDeleteAnime,
+  onBanUser,
+  onUnbanUser,
+  onPromoteUser
+}: AdminDashboardProps) {
+  const [activeTab, setActiveTab] = useState("overview");
+
+  return (
+    <div className="min-h-screen bg-black/20 backdrop-blur-sm">
+      <div className="container mx-auto p-6">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white mb-2">Басқару панелі</h1>
+          <p className="text-white/70">Платформаны басқару және статистика</p>
+        </div>
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-4 bg-white/10">
+            <TabsTrigger value="overview" className="text-white data-[state=active]:bg-primary">
+              Шолу
+            </TabsTrigger>
+            <TabsTrigger value="animes" className="text-white data-[state=active]:bg-primary">
+              Анимэлер
+            </TabsTrigger>
+            <TabsTrigger value="users" className="text-white data-[state=active]:bg-primary">
+              Пайдаланушылар
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="text-white data-[state=active]:bg-primary">
+              Баптаулар
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6 mt-6">
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card className="glass-effect border-white/20">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-white">Анимэлер саны</CardTitle>
+                  <Play className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-white" data-testid="stat-total-animes">
+                    {stats?.totalAnimes || 0}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-effect border-white/20">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-white">Эпизодтар саны</CardTitle>
+                  <BarChart className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-white" data-testid="stat-total-episodes">
+                    {stats?.totalEpisodes || 0}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-effect border-white/20">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-white">Пайдаланушылар</CardTitle>
+                  <Users className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-white" data-testid="stat-total-users">
+                    {stats?.totalUsers || 0}
+                  </div>
+                  <p className="text-xs text-white/60">
+                    {stats?.activeUsers || 0} белсенді, {stats?.bannedUsers || 0} блокталған
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="glass-effect border-white/20">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-white">Көрулер саны</CardTitle>
+                  <BarChart className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-white" data-testid="stat-total-views">
+                    {stats?.totalViews?.toLocaleString() || 0}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="animes" className="space-y-4 mt-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white">Анимэлерді басқару</h2>
+              <Button onClick={onAddAnime} className="bg-primary hover:bg-primary/90" data-testid="button-add-anime">
+                <Plus className="mr-2 h-4 w-4" />
+                Анимэ қосу
+              </Button>
+            </div>
+
+            <Card className="glass-effect border-white/20">
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-white/20">
+                      <TableHead className="text-white">Атауы</TableHead>
+                      <TableHead className="text-white">Санат</TableHead>
+                      <TableHead className="text-white">Статус</TableHead>
+                      <TableHead className="text-white">Көрулер</TableHead>
+                      <TableHead className="text-white">Эпизодтар</TableHead>
+                      <TableHead className="text-white">Әрекеттер</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {animes.map((anime) => (
+                      <TableRow key={anime.id} className="border-white/20" data-testid={`row-anime-${anime.id}`}>
+                        <TableCell className="text-white font-medium">{anime.title}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="border-white/20 text-white">
+                            {anime.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-white">{anime.status}</TableCell>
+                        <TableCell className="text-white">{anime.totalViews.toLocaleString()}</TableCell>
+                        <TableCell className="text-white">{anime.episodeCount}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => onEditAnime?.(anime.id)}
+                              className="text-white hover:bg-white/10"
+                              data-testid={`button-edit-anime-${anime.id}`}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => onDeleteAnime?.(anime.id)}
+                              className="text-red-400 hover:bg-red-400/10"
+                              data-testid={`button-delete-anime-${anime.id}`}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="users" className="space-y-4 mt-6">
+            <h2 className="text-xl font-bold text-white">Пайдаланушыларды басқару</h2>
+
+            <Card className="glass-effect border-white/20">
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-white/20">
+                      <TableHead className="text-white">Пайдаланушы</TableHead>
+                      <TableHead className="text-white">Email</TableHead>
+                      <TableHead className="text-white">Рөл</TableHead>
+                      <TableHead className="text-white">Статус</TableHead>
+                      <TableHead className="text-white">Соңғы белсенділік</TableHead>
+                      <TableHead className="text-white">Әрекеттер</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id} className="border-white/20" data-testid={`row-user-${user.id}`}>
+                        <TableCell className="text-white font-medium">{user.username}</TableCell>
+                        <TableCell className="text-white">{user.email}</TableCell>
+                        <TableCell>
+                          <Badge variant={user.role === 'admin' ? 'default' : 'outline'} 
+                                 className={user.role === 'admin' ? 'bg-primary' : 'border-white/20 text-white'}>
+                            {user.role}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={user.banned ? 'destructive' : 'outline'}
+                                 className={user.banned ? '' : 'border-green-500 text-green-400'}>
+                            {user.banned ? 'Блокталған' : 'Белсенді'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-white">{user.lastActive}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            {user.banned ? (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onUnbanUser?.(user.id)}
+                                className="border-green-500 text-green-400 hover:bg-green-500/10"
+                                data-testid={`button-unban-user-${user.id}`}
+                              >
+                                Блокты алу
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onBanUser?.(user.id)}
+                                className="border-red-500 text-red-400 hover:bg-red-500/10"
+                                data-testid={`button-ban-user-${user.id}`}
+                              >
+                                Блоктау
+                              </Button>
+                            )}
+                            {user.role !== 'admin' && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onPromoteUser?.(user.id)}
+                                className="border-primary text-primary hover:bg-primary/10"
+                                data-testid={`button-promote-user-${user.id}`}
+                              >
+                                Админ ету
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-4 mt-6">
+            <h2 className="text-xl font-bold text-white">Жүйе баптаулары</h2>
+            
+            <Card className="glass-effect border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Платформа баптаулары</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-white/70">Жүйе баптаулары мен конфигурация параметрлері осында болады.</p>
+                <Button variant="outline" className="border-white/20 text-white hover:bg-white/10" data-testid="button-platform-settings">
+                  <Settings className="mr-2 h-4 w-4" />
+                  Баптауларды ашу
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

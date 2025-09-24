@@ -1,0 +1,122 @@
+import { useState } from "react";
+import AnimeCard from "./AnimeCard";
+import CategoryFilter from "./CategoryFilter";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+
+interface Anime {
+  id: string;
+  title: string;
+  category: string;
+  image: string;
+  description: string;
+  rating: number;
+  year: number;
+  status: string;
+  totalViews: number;
+  episodeCount?: number;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  title: string;
+  color: string;
+}
+
+interface AnimeGalleryProps {
+  animes?: Anime[];
+  categories?: Category[];
+  onPlayAnime?: (animeId: string) => void;
+  onShowDetails?: (animeId: string) => void;
+}
+
+export default function AnimeGallery({ 
+  animes = [], 
+  categories = [], 
+  onPlayAnime, 
+  onShowDetails 
+}: AnimeGalleryProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredAnimes = animes.filter((anime) => {
+    const matchesCategory = !selectedCategory || anime.category === selectedCategory;
+    const matchesSearch = !searchQuery || 
+      anime.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      anime.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {/* Hero Section */}
+      <div className="text-center mb-12">
+        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+          AnimeSite
+        </h1>
+        <p className="text-xl text-white/80 mb-8">
+          Қазақша анимэ көру платформасы
+        </p>
+        
+        {/* Search Bar */}
+        <div className="max-w-md mx-auto relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
+          <Input
+            placeholder="Анимэ іздеу..."
+            className="pl-10 glass-effect border-white/20 text-white placeholder:text-white/60 h-12"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            data-testid="input-gallery-search"
+          />
+        </div>
+      </div>
+
+      {/* Category Filter */}
+      <div className="mb-8">
+        <CategoryFilter
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategorySelect={setSelectedCategory}
+        />
+      </div>
+
+      {/* Results Info */}
+      <div className="mb-6">
+        <p className="text-white/70">
+          {filteredAnimes.length} анимэ табылды
+          {selectedCategory && (
+            <span> • {categories.find(c => c.name === selectedCategory)?.title} санатында</span>
+          )}
+          {searchQuery && (
+            <span> • "{searchQuery}" іздеуі бойынша</span>
+          )}
+        </p>
+      </div>
+
+      {/* Anime Grid */}
+      {filteredAnimes.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {filteredAnimes.map((anime) => (
+            <AnimeCard
+              key={anime.id}
+              anime={anime}
+              onPlay={onPlayAnime}
+              onDetails={onShowDetails}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12">
+          <p className="text-white/60 text-lg">
+            {searchQuery || selectedCategory ? 
+              "Іздеу критерийлеріне сәйкес анимэ табылмады" : 
+              "Анимэ жоқ"
+            }
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

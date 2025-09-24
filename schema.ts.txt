@@ -1,0 +1,73 @@
+import { sql } from "drizzle-orm";
+import { pgTable, text, varchar, integer, real, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
+  role: text("role").notNull().default("user"),
+  banned: boolean("banned").notNull().default(false),
+  joinDate: timestamp("join_date").notNull().defaultNow(),
+  lastActive: timestamp("last_active").notNull().defaultNow(),
+});
+
+export const animes = pgTable("animes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  code: text("code").notNull().unique(),
+  category: text("category").notNull(),
+  image: text("image").notNull(),
+  description: text("description").notNull(),
+  rating: real("rating").notNull(),
+  year: integer("year").notNull(),
+  status: text("status").notNull(),
+  totalViews: integer("total_views").notNull().default(0),
+  addedDate: timestamp("added_date").notNull().defaultNow(),
+});
+
+export const episodes = pgTable("episodes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  animeId: varchar("anime_id").notNull().references(() => animes.id),
+  number: integer("number").notNull(),
+  title: text("title").notNull(),
+  videoUrl: text("video_url").notNull(),
+  downloadUrl: text("download_url"),
+  duration: text("duration").notNull(),
+  views: integer("views").notNull().default(0),
+});
+
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  email: true,
+});
+
+export const insertAnimeSchema = createInsertSchema(animes).omit({
+  id: true,
+  addedDate: true,
+  totalViews: true,
+});
+
+export const insertEpisodeSchema = createInsertSchema(episodes).omit({
+  id: true,
+});
+
+export type InsertUser = z.infer<typeof insertUserSchema>;
+export type User = typeof users.$inferSelect;
+export type InsertAnime = z.infer<typeof insertAnimeSchema>;
+export type Anime = typeof animes.$inferSelect;
+export type InsertEpisode = z.infer<typeof insertEpisodeSchema>;
+export type Episode = typeof episodes.$inferSelect;
+
+// Category types
+export const CATEGORIES = [
+  { id: 1, name: 'shonen', title: 'Shonen', color: 'bg-blue-500' },
+  { id: 2, name: 'adventure', title: 'Adventure', color: 'bg-green-500' },
+  { id: 3, name: 'romance', title: 'Romance', color: 'bg-pink-500' },
+  { id: 4, name: 'action', title: 'Action', color: 'bg-red-500' },
+  { id: 5, name: 'comedy', title: 'Comedy', color: 'bg-yellow-500' },
+  { id: 6, name: 'drama', title: 'Drama', color: 'bg-purple-500' }
+] as const;
+
+export type CategoryName = typeof CATEGORIES[number]['name'];
