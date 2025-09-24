@@ -82,5 +82,3 @@ export function ToasterProvider({ children }: { children: React.ReactNode }) {
     </ToasterContext.Provider>
   )
 }
-
-interface ToastProps extends React.ComponentPropsWithoutRef<typeof Toast> {}
