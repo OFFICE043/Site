@@ -81,4 +81,3 @@ export function ToasterProvider({ children }: { children: React.ReactNode }) {
       {children}
     </ToasterContext.Provider>
   )
-}
