@@ -14,8 +14,6 @@ import LoginModal from "./components/LoginModal";
 import AdminDashboard from "./components/AdminDashboard";
 
 // Mock data - todo: remove mock functionality
-import narutoImage from '@assets/generated_images/Naruto_style_anime_poster_e388da03.png';
-import onePieceImage from '@assets/generated_images/One_Piece_style_poster_763484b2.png';
 
 const MOCK_CATEGORIES = [
   { id: 1, name: 'shonen', title: 'Shonen', color: 'bg-blue-500' },
