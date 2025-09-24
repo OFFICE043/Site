@@ -1,8 +1,5 @@
-import { type User, type InsertUser } from "@shared/schema";
+import { type User, type InsertUser } from "./schema"; // <-- Түзетілген жол
 import { randomUUID } from "crypto";
-
-// modify the interface with any CRUD methods
-// you might need
 
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
@@ -12,7 +9,6 @@ export interface IStorage {
 
 export class MemStorage implements IStorage {
   private users: Map<string, User>;
-
   constructor() {
     this.users = new Map();
   }
